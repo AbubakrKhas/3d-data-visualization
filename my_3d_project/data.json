@@ -1,0 +1,128 @@
+{
+    "nodes": [
+      {
+        "id": "Client01",
+        "name": "Client",
+        "position": { "x": 0, "y": 0, "z": 0 },
+        "shape": "cube"
+      },
+      {
+        "id": "Bioreactor_a3f2550d83f6",
+        "name": "Bioreactor",
+        "position": { "x": 10, "y": 10, "z": 0 },
+        "shape": "cube",
+        "source": [
+          { "name": "oxygenDeliveryControl01", "url": "burkert-Data:oxygenDeliveryControl01" },
+          { "name": "PHcontrol01", "url": "burkert-Data:PHcontrol01" },
+          { "name": "HeadSpaceFlushing01", "url": "burkert-Data:HeadSpaceFlushing01" },
+          { "name": "Heating01", "url": "burkert-Data:Heating01" },
+          { "name": "Cooling01", "url": "burkert-Data:Cooling01" },
+          { "name": "FoamingControl01", "url": "burkert-Data:FoamingControl01" },
+          { "name": "Bufferfeeding01", "url": "burkert-Data:Bufferfeeding01" },
+          { "name": "CellCultureMediaFeeding01", "url": "burkert-Data:CellCultureMediaFeeding01" },
+          { "name": "CellGrowthControl01", "url": "burkert-Data:CellGrowthControl01" },
+          { "name": "FermentationProcessMonitoring01", "url": "burkert-Data:FermentationProcessMonitoring01" },
+          { "name": "TemperatureControl01", "url": "burkert-Data:TemperatureControl01" }
+        ]
+      },
+      {
+        "id": "oxygenDeliveryControl01",
+        "name": "Oxygen Delivery Control",
+        "position": { "x": 10, "y": 5, "z": 0 },
+        "shape": "cube",
+        "parent": "Bioreactor_a3f2550d83f6"
+      },
+      {
+        "id": "PHcontrol01",
+        "name": "PH Control",
+        "position": { "x": 10, "y": 0, "z": 0 },
+        "shape": "cube",
+        "parent": "Bioreactor_a3f2550d83f6"
+      },
+      {
+        "id": "HeadSpaceFlushing01",
+        "name": "Head Space Flushing",
+        "position": { "x": 5, "y": 0, "z": 0 },
+        "shape": "sphere",
+        "parent": "Bioreactor_a3f2550d83f6"
+      },
+      {
+        "id": "Heating01",
+        "name": "Heating",
+        "position": { "x": 10, "y": 10, "z": 5 },
+        "shape": "cube",
+        "parent": "Bioreactor_a3f2550d83f6"
+      },
+      {
+        "id": "Cooling01",
+        "name": "Cooling",
+        "position": { "x": 15, "y": 10, "z": 0 },
+        "shape": "cube",
+        "parent": "Bioreactor_a3f2550d83f6"
+      },
+      {
+        "id": "FoamingControl01",
+        "name": "Foaming Control",
+        "position": { "x": 20, "y": 10, "z": 0 },
+        "shape": "cube",
+        "parent": "Bioreactor_a3f2550d83f6"
+      },
+      {
+        "id": "Bufferfeeding01",
+        "name": "Buffer Feeding",
+        "position": { "x": 5, "y": 5, "z": 0 },
+        "shape": "cube",
+        "parent": "Bioreactor_a3f2550d83f6"
+      },
+      {
+        "id": "CellCultureMediaFeeding01",
+        "name": "Cell Culture Media Feeding",
+        "position": { "x": 0, "y": 5, "z": 0 },
+        "shape": "cube",
+        "parent": "Bioreactor_a3f2550d83f6"
+      },
+      {
+        "id": "CellGrowthControl01",
+        "name": "Cell Growth Control",
+        "position": { "x": 15, "y": 5, "z": 0 },
+        "shape": "cube",
+        "parent": "Bioreactor_a3f2550d83f6"
+      },
+      {
+        "id": "FermentationProcessMonitoring01",
+        "name": "Fermentation Process Monitoring",
+        "position": { "x": 10, "y": 15, "z": 0 },
+        "shape": "cube",
+        "parent": "Bioreactor_a3f2550d83f6"
+      },
+      {
+        "id": "TemperatureControl01",
+        "name": "Temperature Control",
+        "position": { "x": 20, "y": 0, "z": 0 },
+        "shape": "cube",
+        "parent": "Bioreactor_a3f2550d83f6"
+      },
+      {
+        "id": "SalesCase01",
+        "name": "Sales Case",
+        "position": { "x": 15, "y": 15, "z": 0 },
+        "shape": "sphere"
+      }
+    ],
+    "edges": [
+      { "source": "Client01", "target": "SalesCase01" },
+      { "source": "SalesCase01", "target": "Bioreactor_a3f2550d83f6" },
+      { "source": "Bioreactor_a3f2550d83f6", "target": "oxygenDeliveryControl01" },
+      { "source": "Bioreactor_a3f2550d83f6", "target": "PHcontrol01" },
+      { "source": "Bioreactor_a3f2550d83f6", "target": "HeadSpaceFlushing01" },
+      { "source": "Bioreactor_a3f2550d83f6", "target": "Heating01" },
+      { "source": "Bioreactor_a3f2550d83f6", "target": "Cooling01" },
+      { "source": "Bioreactor_a3f2550d83f6", "target": "FoamingControl01" },
+      { "source": "Bioreactor_a3f2550d83f6", "target": "Bufferfeeding01" },
+      { "source": "Bioreactor_a3f2550d83f6", "target": "CellCultureMediaFeeding01" },
+      { "source": "Bioreactor_a3f2550d83f6", "target": "CellGrowthControl01" },
+      { "source": "Bioreactor_a3f2550d83f6", "target": "FermentationProcessMonitoring01" },
+      { "source": "Bioreactor_a3f2550d83f6", "target": "TemperatureControl01" }
+    ]
+  }
+  

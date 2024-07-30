@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Data Visualization</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/DragControls.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fetch the data
+            fetch('/data/your_data.json')
+                .then(response => response.json())
+                .then(data => init(data))
+                .catch(error => console.error('Error fetching the data:', error));
+
+            function init(data) {
+                // Set up the scene, camera, and renderer
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                document.body.appendChild(renderer.domElement);
+
+                // Add orbit controls
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+                // Create a map to store the nodes by their IDs
+                const nodes = new Map();
+                const draggableObjects = [];
+                const edges = [];
+
+                // Parse data and create nodes
+                data.nodes.forEach(node => {
+                    let geometry;
+                    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+                    if (node.shape === 'cube') {
+                        geometry = new THREE.BoxGeometry(1, 1, 1);
+                    } else if (node.shape === 'sphere') {
+                        geometry = new THREE.SphereGeometry(0.5, 32, 32);
+                    }
+
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.set(node.position.x, node.position.y, node.position.z);
+                    mesh.name = node.name;
+                    scene.add(mesh);
+
+                    nodes.set(node.id, mesh);
+                    draggableObjects.push(mesh);
+                });
+
+                // Create edges between nodes
+                data.edges.forEach(edge => {
+                    const sourceNode = nodes.get(edge.source);
+                    const targetNode = nodes.get(edge.target);
+
+                    if (sourceNode && targetNode) {
+                        const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+                        const points = [
+                            new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
+                            new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
+                        ];
+                        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                        const line = new THREE.Line(geometry, material);
+                        line.userData = { sourceNode, targetNode };
+                        scene.add(line);
+
+                        edges.push(line);
+                    }
+                });
+
+                // Position the camera
+                camera.position.z = 20;
+
+                // Add drag controls
+                const dragControls = new THREE.DragControls(draggableObjects, camera, renderer.domElement);
+                dragControls.addEventListener('dragstart', function (event) {
+                    controls.enabled = false;
+                });
+
+                dragControls.addEventListener('dragend', function (event) {
+                    controls.enabled = true;
+                });
+
+                dragControls.addEventListener('drag', function (event) {
+                    // Update edges positions
+                    edges.forEach(line => {
+                        const { sourceNode, targetNode } = line.userData;
+                        const points = [
+                            new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
+                            new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
+                        ];
+                        line.geometry.setFromPoints(points);
+                    });
+                });
+
+                // Animation loop
+                function animate() {
+                    requestAnimationFrame(animate);
+                    controls.update();
+                    renderer.render(scene, camera);
+                }
+
+                animate();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+-----------------second--------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Data Visualization</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/DragControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fetch the data
+            fetch('/data/your_data.json')
+                .then(response => response.json())
+                .then(data => init(data))
+                .catch(error => console.error('Error fetching the data:', error));
+
+            function init(data) {
+                // Set up the scene, camera, and renderer
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                document.body.appendChild(renderer.domElement);
+
+                // Add orbit controls
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+                // Create a map to store the nodes by their IDs
+                const nodes = new Map();
+                const draggableObjects = [];
+                const edges = new Map(); // Store edges in a map for easy access
+                const labels = new Map(); // Store node labels
+
+                // Function to generate random position around a parent node
+                function getRandomPositionAroundParent(parentPosition, radius) {
+                    const angle = Math.random() * 2 * Math.PI;
+                    const distance = Math.random() * radius;
+                    const x = parentPosition.x + Math.cos(angle) * distance;
+                    const y = parentPosition.y + Math.sin(angle) * distance;
+                    const z = parentPosition.z; // Assuming a 2D plane
+                    return new THREE.Vector3(x, y, z);
+                }
+
+                // Function to create a label sprite
+                function createLabel(text) {
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    context.font = '24px Arial';
+                    context.fillStyle = 'white';
+                    context.fillText(text, 0, 24);
+
+                    const texture = new THREE.CanvasTexture(canvas);
+                    const material = new THREE.SpriteMaterial({ map: texture });
+                    const sprite = new THREE.Sprite(material);
+                    sprite.scale.set(4, 2, 1); // Adjust size as necessary
+                    return sprite;
+                }
+
+                // Parse data and create nodes
+                data.nodes.forEach(node => {
+                    let geometry;
+                    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+                    if (node.shape === 'cube') {
+                        geometry = new THREE.BoxGeometry(1, 1, 1);
+                    } else if (node.shape === 'sphere') {
+                        geometry = new THREE.SphereGeometry(0.5, 32, 32);
+                    }
+
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.set(node.position.x, node.position.y, node.position.z);
+                    mesh.name = node.name;
+                    mesh.userData = { isCollapsed: false }; // Track if node is collapsed
+
+                    // Create and add label
+                    const label = createLabel(node.name);
+                    label.position.set(node.position.x, node.position.y + 1.5, node.position.z); // Position above the node
+                    scene.add(label);
+                    labels.set(node.id, label);
+
+                    scene.add(mesh);
+                    nodes.set(node.id, mesh);
+                    draggableObjects.push(mesh);
+
+                    // Add parent reference if available
+                    if (node.parent) {
+                        if (!nodes.get(node.parent).children) {
+                            nodes.get(node.parent).children = [];
+                        }
+                        nodes.get(node.parent).children.push(mesh);
+                    }
+                });
+
+                // Create edges between nodes
+                data.edges.forEach(edge => {
+                    const sourceNode = nodes.get(edge.source);
+                    const targetNode = nodes.get(edge.target);
+
+                    if (sourceNode && targetNode) {
+                        const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+                        const points = [
+                            new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
+                            new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
+                        ];
+                        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                        const line = new THREE.Line(geometry, material);
+                        line.userData = { sourceNode, targetNode };
+                        scene.add(line);
+
+                        if (!edges.has(sourceNode.id)) {
+                            edges.set(sourceNode.id, []);
+                        }
+                        edges.get(sourceNode.id).push(line);
+
+                        if (!edges.has(targetNode.id)) {
+                            edges.set(targetNode.id, []);
+                        }
+                        edges.get(targetNode.id).push(line);
+                    }
+                });
+
+                // Position the camera
+                camera.position.z = 20;
+
+                // Add drag controls
+                const dragControls = new THREE.DragControls(draggableObjects, camera, renderer.domElement);
+                dragControls.addEventListener('dragstart', function (event) {
+                    controls.enabled = false;
+                });
+
+                dragControls.addEventListener('dragend', function (event) {
+                    controls.enabled = true;
+                });
+
+                dragControls.addEventListener('drag', function (event) {
+                    // Update edges positions
+                    edges.forEach(edgeList => {
+                        edgeList.forEach(line => {
+                            const { sourceNode, targetNode } = line.userData;
+                            const points = [
+                                new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
+                                new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
+                            ];
+                            line.geometry.setFromPoints(points);
+                        });
+                    });
+                });
+
+                // Add raycaster for detecting clicks
+                const raycaster = new THREE.Raycaster();
+                const mouse = new THREE.Vector2();
+
+                function onMouseClick(event) {
+                    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+                    raycaster.setFromCamera(mouse, camera);
+
+                    const intersects = raycaster.intersectObjects(draggableObjects);
+
+                    if (intersects.length > 0) {
+                        const intersectedObject = intersects[0].object;
+                        toggleChildren(intersectedObject);
+                    }
+                }
+
+                function toggleChildren(parent) {
+                    if (parent.children) {
+                        const isCollapsed = parent.userData.isCollapsed;
+                        const randomRadius = 10; // Adjust as necessary
+
+                        const targetPositions = [];
+                        const initialPositions = [];
+
+                        parent.children.forEach(child => {
+                            if (isCollapsed) {
+                                // Opening effect: Move children back to their initial positions
+                                targetPositions.push(child.userData.originalPosition.clone());
+                                initialPositions.push(child.position.clone());
+                                // Show edges connected to this child
+                                updateEdgeVisibility(child, true);
+                            } else {
+                                // Closing effect: Move children to random positions
+                                targetPositions.push(getRandomPositionAroundParent(parent.position, randomRadius));
+                                initialPositions.push(child.position.clone());
+                                // Hide edges connected to this child with fade-out effect
+                                fadeOutEdges(child, 500);
+                            }
+                        });
+
+                        parent.children.forEach((child, index) => {
+                            const tween = new TWEEN.Tween(child.position)
+                                .to(targetPositions[index], 1000)  // Animation duration in ms
+                                .easing(TWEEN.Easing.Quadratic.Out) // Easing function
+                                .onUpdate(() => {
+                                    // Update edge positions during animation
+                                    edges.forEach(edgeList => {
+                                        edgeList.forEach(line => {
+                                            const { sourceNode, targetNode } = line.userData;
+                                            if (parent.children.includes(sourceNode) || parent.children.includes(targetNode)) {
+                                                const points = [
+                                                    new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
+                                                    new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
+                                                ];
+                                                line.geometry.setFromPoints(points);
+                                            }
+                                        });
+                                    });
+                                })
+                                .onComplete(() => {
+                                    if (isCollapsed) {
+                                        child.visible = true;
+                                    } else {
+                                        child.visible = false;
+                                    }
+                                })
+                                .start();
+                        });
+
+                        if (!isCollapsed) {
+                            parent.children.forEach(child => {
+                                child.userData.originalPosition = child.position.clone(); // Save original position for future use
+                                child.visible = true;
+                            });
+                        }
+
+                        parent.userData.isCollapsed = !isCollapsed; // Toggle the state
+
+                        function animate() {
+                            requestAnimationFrame(animate);
+                            TWEEN.update();
+                        }
+                        animate();
+                    }
+                }
+
+                function fadeOutEdges(child, duration) {
+                    edges.get(child.id).forEach(edge => {
+                        edge.visible = true;
+                        const material = edge.material;
+                        material.opacity = 1; // Start with visible
+                        new TWEEN.Tween(material)
+                            .to({ opacity: 0 }, duration)
+                            .easing(TWEEN.Easing.Quadratic.Out)
+                            .onUpdate(() => {
+                                material.opacity = material.opacity;
+                            })
+                            .onComplete(() => {
+                                edge.visible = false;
+                            })
+                            .start();
+                    });
+                }
+
+                function fadeInEdges(child, duration) {
+                    edges.get(child.id).forEach(edge => {
+                        edge.visible = true;
+                        const material = edge.material;
+                        material.opacity = 0; // Start with invisible
+                        new TWEEN.Tween(material)
+                            .to({ opacity: 1 }, duration)
+                            .easing(TWEEN.Easing.Quadratic.Out)
+                            .onUpdate(() => {
+                                material.opacity = material.opacity;
+                            })
+                            .start();
+                    });
+                }
+
+                function updateEdgeVisibility(child, visible) {
+                    edges.get(child.id).forEach(edge => {
+                        edge.visible = visible;
+                    });
+                }
+
+                window.addEventListener('click', onMouseClick, false);
+
+                // Animation loop
+                function animate() {
+                    requestAnimationFrame(animate);
+                    controls.update();
+                    renderer.render(scene, camera);
+                }
+
+                animate();
+            }
+        });
+    </script>
+</body>
+</html>
+
+---------------third version-------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Data Visualization</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/DragControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fetch the data
+            fetch('/data/your_data.json')
+                .then(response => response.json())
+                .then(data => init(data))
+                .catch(error => console.error('Error fetching the data:', error));
+
+            function init(data) {
+                // Set up the scene, camera, and renderer
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                document.body.appendChild(renderer.domElement);
+
+                // Add orbit controls
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+                // Create a map to store the nodes by their IDs
+                const nodes = new Map();
+                const draggableObjects = [];
+                const edges = new Map(); // Store edges in a map for easy access
+                const labels = new Map(); // Store node labels
+
+                // Function to generate random position around a parent node
+                function getRandomPositionAroundParent(parentPosition, radius) {
+                    const angle = Math.random() * 2 * Math.PI;
+                    const distance = Math.random() * radius;
+                    const x = parentPosition.x + Math.cos(angle) * distance;
+                    const y = parentPosition.y + Math.sin(angle) * distance;
+                    const z = parentPosition.z; // Assuming a 2D plane
+                    return new THREE.Vector3(x, y, z);
+                }
+
+                // Function to create a label sprite
+                function createLabel(text) {
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    context.font = '24px Arial';
+                    context.fillStyle = 'white';
+                    context.fillText(text, 0, 24);
+
+                    const texture = new THREE.CanvasTexture(canvas);
+                    const material = new THREE.SpriteMaterial({ map: texture });
+                    const sprite = new THREE.Sprite(material);
+                    sprite.scale.set(4, 2, 1); // Adjust size as necessary
+                    return sprite;
+                }
+
+                // Parse data and create nodes
+                data.nodes.forEach(node => {
+                    let geometry;
+                    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+                    if (node.shape === 'cube') {
+                        geometry = new THREE.BoxGeometry(1, 1, 1);
+                    } else if (node.shape === 'sphere') {
+                        geometry = new THREE.SphereGeometry(0.5, 32, 32);
+                    }
+
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.set(node.position.x, node.position.y, node.position.z);
+                    mesh.name = node.name;
+                    mesh.userData = { isCollapsed: false }; // Track if node is collapsed
+
+                    // Create and add label
+                    const label = createLabel(node.name);
+                    label.position.set(node.position.x, node.position.y + 1.5, node.position.z); // Position above the node
+                    scene.add(label);
+                    labels.set(node.id, label);
+
+                    scene.add(mesh);
+                    nodes.set(node.id, mesh);
+                    draggableObjects.push(mesh);
+
+                    // Add parent reference if available
+                    if (node.parent) {
+                        if (!nodes.get(node.parent).children) {
+                            nodes.get(node.parent).children = [];
+                        }
+                        nodes.get(node.parent).children.push(mesh);
+                    }
+                });
+
+                // Create edges between nodes
+                data.edges.forEach(edge => {
+                    const sourceNode = nodes.get(edge.source);
+                    const targetNode = nodes.get(edge.target);
+
+                    if (sourceNode && targetNode) {
+                        const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+                        const points = [
+                            new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
+                            new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
+                        ];
+                        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                        const line = new THREE.Line(geometry, material);
+                        line.userData = { sourceNode, targetNode };
+                        scene.add(line);
+
+                        if (!edges.has(sourceNode.id)) {
+                            edges.set(sourceNode.id, []);
+                        }
+                        edges.get(sourceNode.id).push(line);
+
+                        if (!edges.has(targetNode.id)) {
+                            edges.set(targetNode.id, []);
+                        }
+                        edges.get(targetNode.id).push(line);
+                    }
+                });
+
+                // Position the camera
+                camera.position.z = 20;
+
+                // Add drag controls
+                const dragControls = new THREE.DragControls(draggableObjects, camera, renderer.domElement);
+                dragControls.addEventListener('dragstart', function (event) {
+                    controls.enabled = false;
+                });
+
+                dragControls.addEventListener('dragend', function (event) {
+                    controls.enabled = true;
+                });
+
+                dragControls.addEventListener('drag', function (event) {
+                    // Update edges positions
+                    edges.forEach(edgeList => {
+                        edgeList.forEach(line => {
+                            const { sourceNode, targetNode } = line.userData;
+                            const points = [
+                                new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
+                                new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
+                            ];
+                            line.geometry.setFromPoints(points);
+                        });
+                    });
+                        // Update labels positions
+    labels.forEach((label, id) => {
+        const node = nodes.get(id);
+        if (node) {
+            label.position.set(node.position.x, node.position.y + 1.5, node.position.z);
+        }
+    });
+                });
+
+                // Add raycaster for detecting clicks
+                const raycaster = new THREE.Raycaster();
+                const mouse = new THREE.Vector2();
+
+                function onMouseClick(event) {
+                    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+                    raycaster.setFromCamera(mouse, camera);
+
+                    const intersects = raycaster.intersectObjects(draggableObjects);
+
+                    if (intersects.length > 0) {
+                        const intersectedObject = intersects[0].object;
+                        toggleChildren(intersectedObject);
+                    }
+                }
+
+                function toggleChildren(parent) {
+                    if (parent.children) {
+                        const isCollapsed = parent.userData.isCollapsed;
+                        const randomRadius = 10; // Adjust as necessary
+
+                        const targetPositions = [];
+                        const initialPositions = [];
+
+                        parent.children.forEach(child => {
+                            if (isCollapsed) {
+                                // Opening effect: Move children back to their initial positions
+                                targetPositions.push(child.userData.originalPosition.clone());
+                                initialPositions.push(child.position.clone());
+                                // Show edges connected to this child
+                                updateEdgeVisibility(child, true);
+                            } else {
+                                // Closing effect: Move children to random positions
+                                targetPositions.push(getRandomPositionAroundParent(parent.position, randomRadius));
+                                initialPositions.push(child.position.clone());
+                                // Hide edges connected to this child with fade-out effect
+                                fadeOutEdges(child, 500);
+                            }
+                        });
+
+                        parent.children.forEach((child, index) => {
+                            const tween = new TWEEN.Tween(child.position)
+                                .to(targetPositions[index], 1000)  // Animation duration in ms
+                                .easing(TWEEN.Easing.Quadratic.Out) // Easing function
+                                .onUpdate(() => {
+                                    // Update edge positions during animation
+                                    edges.forEach(edgeList => {
+                                        edgeList.forEach(line => {
+                                            const { sourceNode, targetNode } = line.userData;
+                                            if (parent.children.includes(sourceNode) || parent.children.includes(targetNode)) {
+                                                const points = [
+                                                    new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
+                                                    new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
+                                                ];
+                                                line.geometry.setFromPoints(points);
+                                            }
+                                        });
+                                    });
+                                })
+                                .onComplete(() => {
+                                    if (isCollapsed) {
+                                        child.visible = true;
+                                    } else {
+                                        child.visible = false;
+                                    }
+                                })
+                                .start();
+                        });
+
+                        if (!isCollapsed) {
+                            parent.children.forEach(child => {
+                                child.userData.originalPosition = child.position.clone(); // Save original position for future use
+                                child.visible = true;
+                            });
+                        }
+
+                        parent.userData.isCollapsed = !isCollapsed; // Toggle the state
+
+                        function animate() {
+                            requestAnimationFrame(animate);
+                            TWEEN.update();
+                        }
+                        animate();
+                    }
+                }
+
+                function fadeOutEdges(child, duration) {
+                    edges.get(child.id).forEach(edge => {
+                        edge.visible = true;
+                        const material = edge.material;
+                        material.opacity = 1; // Start with visible
+                        new TWEEN.Tween(material)
+                            .to({ opacity: 0 }, duration)
+                            .easing(TWEEN.Easing.Quadratic.Out)
+                            .onUpdate(() => {
+                                material.opacity = material.opacity;
+                            })
+                            .onComplete(() => {
+                                edge.visible = false;
+                            })
+                            .start();
+                    });
+                }
+
+                function fadeInEdges(child, duration) {
+                    edges.get(child.id).forEach(edge => {
+                        edge.visible = true;
+                        const material = edge.material;
+                        material.opacity = 0; // Start with invisible
+                        new TWEEN.Tween(material)
+                            .to({ opacity: 1 }, duration)
+                            .easing(TWEEN.Easing.Quadratic.Out)
+                            .onUpdate(() => {
+                                material.opacity = material.opacity;
+                            })
+                            .start();
+                    });
+                }
+
+                function updateEdgeVisibility(child, visible) {
+                    edges.get(child.id).forEach(edge => {
+                        edge.visible = visible;
+                    });
+                }
+
+                window.addEventListener('click', onMouseClick, false);
+
+                // Animation loop
+                function animate() {
+                    requestAnimationFrame(animate);
+                    controls.update();
+                    renderer.render(scene, camera);
+                }
+
+                animate();
+            }
+        });
+    </script>
+</body>
+</html>
+---------------------forth zustand ---------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Data Visualization</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/DragControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fetch the data
+            fetch('/data/your_data.json')
+                .then(response => response.json())
+                .then(data => init(data))
+                .catch(error => console.error('Error fetching the data:', error));
+
+            function init(data) {
+                // Set up the scene, camera, and renderer
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                document.body.appendChild(renderer.domElement);
+
+                // Add orbit controls
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+                // Create a map to store the nodes by their IDs
+                const nodes = new Map();
+                const draggableObjects = [];
+                const edges = new Map(); // Store edges in a map for easy access
+                const labels = new Map(); // Store node labels
+
+                // Function to generate random position around a parent node
+                function getRandomPositionAroundParent(parentPosition, radius) {
+                    const angle = Math.random() * 2 * Math.PI;
+                    const distance = Math.random() * radius;
+                    const x = parentPosition.x + Math.cos(angle) * distance;
+                    const y = parentPosition.y + Math.sin(angle) * distance;
+                    const z = parentPosition.z; // Assuming a 2D plane
+                    return new THREE.Vector3(x, y, z);
+                }
+
+                // Function to create a label sprite
+                function createLabel(text) {
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    context.font = '24px Arial';
+                    context.fillStyle = 'white';
+                    context.fillText(text, 0, 24);
+
+                    const texture = new THREE.CanvasTexture(canvas);
+                    const material = new THREE.SpriteMaterial({ map: texture });
+                    const sprite = new THREE.Sprite(material);
+                    sprite.scale.set(4, 2, 1); // Adjust size as necessary
+                    return sprite;
+                }
+
+                // Parse data and create nodes
+                data.nodes.forEach(node => {
+                    let geometry;
+                    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+                    if (node.shape === 'cube') {
+                        geometry = new THREE.BoxGeometry(1, 1, 1);
+                    } else if (node.shape === 'sphere') {
+                        geometry = new THREE.SphereGeometry(0.5, 32, 32);
+                    }
+
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.set(node.position.x, node.position.y, node.position.z);
+                    mesh.name = node.name;
+                    mesh.userData = { isCollapsed: false }; // Track if node is collapsed
+
+                    // Create and add label
+                    const label = createLabel(node.name);
+                    label.position.set(node.position.x, node.position.y + 1.5, node.position.z); // Position above the node
+                    scene.add(label);
+                    labels.set(node.id, label);
+
+                    scene.add(mesh);
+                    nodes.set(node.id, mesh);
+                    draggableObjects.push(mesh);
+
+                    // Add parent reference if available
+                    if (node.parent) {
+                        if (!nodes.get(node.parent).children) {
+                            nodes.get(node.parent).children = [];
+                        }
+                        nodes.get(node.parent).children.push(mesh);
+                    }
+                });
+
+                // Create edges between nodes
+                data.edges.forEach(edge => {
+                    const sourceNode = nodes.get(edge.source);
+                    const targetNode = nodes.get(edge.target);
+
+                    if (sourceNode && targetNode) {
+                        const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+                        const points = [
+                            new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
+                            new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
+                        ];
+                        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                        const line = new THREE.Line(geometry, material);
+                        line.userData = { sourceNode, targetNode };
+                        scene.add(line);
+
+                        if (!edges.has(sourceNode.id)) {
+                            edges.set(sourceNode.id, []);
+                        }
+                        edges.get(sourceNode.id).push(line);
+
+                        if (!edges.has(targetNode.id)) {
+                            edges.set(targetNode.id, []);
+                        }
+                        edges.get(targetNode.id).push(line);
+                    }
+                });
+
+                // Position the camera
+                camera.position.z = 20;
+
+                // Add drag controls
+                const dragControls = new THREE.DragControls(draggableObjects, camera, renderer.domElement);
+                dragControls.addEventListener('dragstart', function (event) {
+                    controls.enabled = false;
+                });
+
+                dragControls.addEventListener('dragend', function (event) {
+                    controls.enabled = true;
+                });
+
+                dragControls.addEventListener('drag', function (event) {
+                    console.log(`Dragging: ${event.object.name}`);
+                    // Update edges positions
+                    edges.forEach(edgeList => {
+                        edgeList.forEach(line => {
+                            const { sourceNode, targetNode } = line.userData;
+                            if (event.object === sourceNode || event.object === targetNode) {
+                                const points = [
+                                    new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
+                                    new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
+                                ];
+                                line.geometry.setFromPoints(points);
+                                console.log(`Updated edge between ${sourceNode.name} and ${targetNode.name}`);
+                            }
+                        });
+                    });
+
+                    // Update labels positions
+                    labels.forEach((label, id) => {
+                        const node = nodes.get(id);
+                        if (node) {
+                            label.position.set(node.position.x, node.position.y + 1.5, node.position.z);
+                            console.log(`Updated label position for node: ${node.name}`);
+                        }
+                    });
+                });
+
+                // Add raycaster for detecting clicks
+                const raycaster = new THREE.Raycaster();
+                const mouse = new THREE.Vector2();
+
+                function onMouseClick(event) {
+                    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+                    raycaster.setFromCamera(mouse, camera);
+
+                    const intersects = raycaster.intersectObjects(draggableObjects);
+
+                    if (intersects.length > 0) {
+                        const intersectedObject = intersects[0].object;
+                        toggleChildren(intersectedObject);
+                    }
+                }
+
+                function toggleChildren(parent) {
+    if (parent.children) {
+        const isCollapsed = parent.userData.isCollapsed;
+        const randomRadius = 10; // Adjust as necessary
+
+        console.log(`Toggling children of parent: ${parent.name}. Is collapsed: ${isCollapsed}`);
+
+        const targetPositions = [];
+        const initialPositions = [];
+
+        parent.children.forEach(child => {
+            if (isCollapsed) {
+                // Opening effect: Move children back to their initial positions
+                targetPositions.push(child.userData.originalPosition.clone());
+                initialPositions.push(child.position.clone());
+                // Show edges connected to this child
+                updateEdgeVisibility(child, true);
+
+                // Show the label
+                const label = labels.get(child.id);
+                if (label) {
+                    label.visible = true;
+                    console.log(`Showing label for child: ${child.name}`);
+                }
+            } else {
+                // Closing effect: Move children to random positions
+                targetPositions.push(getRandomPositionAroundParent(parent.position, randomRadius));
+                initialPositions.push(child.position.clone());
+                // Hide edges connected to this child with fade-out effect
+                fadeOutEdges(child, 500);
+
+                // Hide the label
+                const label = labels.get(child.id);
+                if (label) {
+                    label.visible = false;
+                    console.log(`Hiding label for child: ${child.name}`);
+                }
+            }
+        });
+
+                        parent.children.forEach((child, index) => {
+            console.log(`Animating child: ${child.name}`);
+            const tween = new TWEEN.Tween(child.position)
+                .to(targetPositions[index], 1000)  // Animation duration in ms
+                .easing(TWEEN.Easing.Quadratic.Out) // Easing function
+                .onUpdate(() => {
+                    // Update edge positions during animation
+                    edges.forEach(edgeList => {
+                        edgeList.forEach(line => {
+                            const { sourceNode, targetNode } = line.userData;
+                            if (parent.children.includes(sourceNode) || parent.children.includes(targetNode)) {
+                                const points = [
+                                    new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
+                                    new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
+                                ];
+                                line.geometry.setFromPoints(points);
+                            }
+                        });
+                    });
+
+                    // Update labels positions
+                    labels.forEach((label, id) => {
+                        const node = nodes.get(id);
+                        if (node) {
+                            label.position.set(node.position.x, node.position.y + 1.5, node.position.z);
+                        }
+                    });
+                })
+                .onComplete(() => {
+                    if (isCollapsed) {
+                        child.visible = true;
+                        console.log(`Child ${child.name} is now visible.`);
+                    } else {
+                        child.visible = false;
+                        console.log(`Child ${child.name} is now hidden.`);
+                    }
+                })
+                .start();
+        });
+
+        if (!isCollapsed) {
+            parent.children.forEach(child => {
+                child.userData.originalPosition = child.position.clone(); // Save original position for future use
+                child.visible = true;
+                console.log(`Child ${child.name} has been set to visible.`);
+            });
+        }
+                        parent.userData.isCollapsed = !isCollapsed; // Toggle the state
+
+                        function animate() {
+            requestAnimationFrame(animate);
+            TWEEN.update();
+        }
+        animate();
+    }
+}
+
+                function updateEdgeVisibility(node, visible) {
+    if (edges.has(node.id)) {
+        edges.get(node.id).forEach(line => {
+            line.visible = visible;
+        });
+    }
+}
+                function fadeOutEdges(node, duration) {
+    if (edges.has(node.id)) {
+        edges.get(node.id).forEach(line => {
+            new TWEEN.Tween(line.material)
+                .to({ opacity: 0 }, duration)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onUpdate(() => {
+                    line.material.opacity = line.material.opacity;
+                })
+                .onComplete(() => {
+                    line.visible = false;
+                })
+                .start();
+        });
+    }
+}
+
+                // Add event listener for mouse click
+                window.addEventListener('click', onMouseClick);
+
+                // Animation loop
+                function animate() {
+                    requestAnimationFrame(animate);
+                    TWEEN.update();
+                    controls.update();
+                    renderer.render(scene, camera);
+                }
+                animate();
+
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

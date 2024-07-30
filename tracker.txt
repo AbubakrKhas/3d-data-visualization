@@ -1,0 +1,12 @@
+your_project/
+│
+├── app.py
+├── models.py
+├── static/
+│   └── js/
+│       └── three.min.js
+├── templates/
+│   └── index.html
+├── users.db
+└── data/
+    └── your_data.json

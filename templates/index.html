@@ -187,113 +187,114 @@
                         const intersectedObject = intersects[0].object;
                         console.log(`Node clicked: ${intersectedObject.name}`);
                         toggleChildren(intersectedObject);
+                        bounceNode(intersectedObject, edges.get(intersectedObject.id) || []); // Pass the edges connected to the node
                     }
                 }
 
                 function toggleChildren(parent) {
-                    if (parent.children) {
-                        const isCollapsed = parent.userData.isCollapsed;
-                        const randomRadius = 10; // Adjust as necessary
+    if (parent.children) {
+        const isCollapsed = parent.userData.isCollapsed;
+        const randomRadius = 10; // Adjust as necessary
 
-                        console.log(`Toggling children of parent: ${parent.name}. Is collapsed: ${isCollapsed}`);
+        const targetPositions = [];
+        const initialPositions = [];
 
-                        const targetPositions = [];
-                        const initialPositions = [];
+        parent.children.forEach(child => {
+            const label = labels.get(child.id);
+            if (isCollapsed) {
+                // Opening effect: Move children back to their initial positions
+                targetPositions.push(child.userData.originalPosition.clone());
+                initialPositions.push(child.position.clone());
+                // Show edges connected to this child
+                updateEdgeVisibility(child, true);
+            } else {
+                // Closing effect: Move children to random positions
+                targetPositions.push(getRandomPositionAroundParent(parent.position, randomRadius));
+                initialPositions.push(child.position.clone());
+                // Hide edges connected to this child with fade-out effect
+                fadeOutEdges(child, 500);
+            }
+        });
 
-                        parent.children.forEach(child => {
-                            const label = labels.get(child.id);
-                            if (isCollapsed) {
-                                // Opening effect: Move children back to their initial positions
-                                targetPositions.push(child.userData.originalPosition.clone());
-                                initialPositions.push(child.position.clone());
-                                // Show edges connected to this child
-                                updateEdgeVisibility(child, true);
-
-                                // Show the label
-                                if (label) {
-                                    console.log(`Label for ${child.name} visibility before: ${label.visible}`);
-                                    label.visible = true;
-                                    console.log(`Showing label for child: ${child.name}`);
-                                    console.log(`Label for ${child.name} visibility after: ${label.visible}`);
-                                } else {
-                                    console.warn(`Label for child ${child.name} not found.`);
-                                }
-                            } else {
-                                // Closing effect: Move children to random positions
-                                targetPositions.push(getRandomPositionAroundParent(parent.position, randomRadius));
-                                initialPositions.push(child.position.clone());
-                                // Hide edges connected to this child with fade-out effect
-                                fadeOutEdges(child, 500);
-
-                                // Hide the label
-                                if (label) {
-                                    console.log(`Label for ${child.name} visibility before: ${label.visible}`);
-                                    label.visible = false;
-                                    console.log(`Hiding label for child: ${child.name}`);
-                                    console.log(`Label for ${child.name} visibility after: ${label.visible}`);
-                                } else {
-                                    console.warn(`Label for child ${child.name} not found.`);
-                                }
+        parent.children.forEach((child, index) => {
+            const tween = new TWEEN.Tween(child.position)
+                .to(targetPositions[index], 1000)  // Animation duration in ms
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onUpdate(() => {
+                    // Update edges during the animation
+                    edges.forEach(edgeList => {
+                        edgeList.forEach(line => {
+                            const { sourceNode, targetNode } = line.userData;
+                            if ((sourceNode === child) || (targetNode === child)) {
+                                const points = [
+                                    new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
+                                    new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
+                                ];
+                                line.geometry.setFromPoints(points);
                             }
                         });
+                    });
 
-                        parent.children.forEach((child, index) => {
-                            console.log(`Animating child: ${child.name}`);
-                            const tween = new TWEEN.Tween(child.position)
-                                .to(targetPositions[index], 1000)  // Animation duration in ms
-                                .easing(TWEEN.Easing.Quadratic.Out)
-                                .onUpdate(() => {
-                                    // Update edges during the animation
-                                    edges.forEach(edgeList => {
-                                        edgeList.forEach(line => {
-                                            const { sourceNode, targetNode } = line.userData;
-                                            if ((sourceNode === child) || (targetNode === child)) {
-                                                const points = [
-                                                    new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
-                                                    new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
-                                                ];
-                                                line.geometry.setFromPoints(points);
-                                            }
-                                        });
-                                    });
-
-                                    // Update labels positions
-                                    labels.forEach((label, id) => {
-                                        const node = nodes.get(id);
-                                        if (node) {
-                                            label.position.set(node.position.x, node.position.y + 1.5, node.position.z);
-                                        }
-                                    });
-                                })
-                                .onComplete(() => {
-                                    if (isCollapsed) {
-                                        child.visible = true;
-                                        console.log(`Child ${child.name} is now visible.`);
-                                    } else {
-                                        child.visible = false;
-                                        console.log(`Child ${child.name} is now hidden.`);
-                                    }
-                                })
-                                .start();
-                        });
-
-                        if (!isCollapsed) {
-                            parent.children.forEach(child => {
-                                child.userData.originalPosition = child.position.clone(); // Save original position for future use
-                                child.visible = true;
-                                console.log(`Child ${child.name} has been set to visible.`);
-                            });
+                    // Update labels positions and visibility
+                    labels.forEach((label, id) => {
+                        const node = nodes.get(id);
+                        if (node) {
+                            label.position.set(node.position.x, node.position.y + 1.5, node.position.z);
+                            label.visible = node.visible; // Update label visibility based on node visibility
                         }
-
-                        parent.userData.isCollapsed = !isCollapsed; // Toggle the state
-
-                        function animate() {
-                            requestAnimationFrame(animate);
-                            TWEEN.update();
-                        }
-                        animate();
+                    });
+                })
+                .onComplete(() => {
+                    if (isCollapsed) {
+                        child.visible = true;
+                    } else {
+                        child.visible = false;
                     }
-                }
+                })
+                .start();
+        });
+
+        if (!isCollapsed) {
+            parent.children.forEach(child => {
+                child.userData.originalPosition = child.position.clone();
+                child.visible = true;
+            });
+        }
+
+        parent.userData.isCollapsed = !isCollapsed;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            TWEEN.update();
+        }
+        animate();
+    }
+}
+
+function bounceNode(node, edges) {
+    const originalPosition = node.position.clone();
+    const targetPosition = originalPosition.clone().add(new THREE.Vector3(0, 1, 0)); // Bounce up by 1 unit
+
+    new TWEEN.Tween(node.position)
+        .to(targetPosition, 200) // Animation duration in ms
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .yoyo(true) // Reverse the animation after it completes
+        .repeat(1) // Number of times to repeat the animation
+        .onUpdate(() => {
+            // Update the positions of the edges connected to the node
+            edges.forEach(edge => {
+                const { sourceNode, targetNode } = edge.userData;
+                const points = [
+                    new THREE.Vector3(sourceNode.position.x, sourceNode.position.y, sourceNode.position.z),
+                    new THREE.Vector3(targetNode.position.x, targetNode.position.y, targetNode.position.z)
+                ];
+                edge.geometry.setFromPoints(points);
+            });
+        })
+        .start();
+}
+
+
 
                 function updateEdgeVisibility(node, visible) {
                     if (edges.has(node.id)) {

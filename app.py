@@ -42,16 +42,16 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-#@app.route('/register', methods=['GET', 'POST'])
-#def register():
-#    if request.method == 'POST':
-#        username = request.form['username']
-#        password = request.form['password']
-#        new_user = create_user(username, password)
-#        login_user(new_user)
-#        return redirect(url_for('index'))
-#
-#    return render_template('register.html')
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        new_user = create_user(username, password)
+        login_user(new_user)
+        return redirect(url_for('index'))
+
+    return render_template('register.html')
 
 def create_user(username, password):
     user = User(username=username, password=password)

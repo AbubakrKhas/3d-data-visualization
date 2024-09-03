@@ -1,0 +1,194 @@
+{
+  "nodes": [
+    {
+      "id": "MainNode",
+      "name": "Main Node",
+      "position": { "x": 0, "y": 0, "z": 0 },
+      "shape": "sphere",
+      "source": [
+        { "name": "ChildNode01", "url": "example-Data:ChildNode01" },
+        { "name": "ChildNode02", "url": "example-Data:ChildNode02" },
+        { "name": "ChildNode03", "url": "example-Data:ChildNode03" },
+        { "name": "ChildNode04", "url": "example-Data:ChildNode04" },
+        { "name": "ChildNode05", "url": "example-Data:ChildNode05" },
+        { "name": "ChildNode06", "url": "example-Data:ChildNode06" },
+        { "name": "ChildNode07", "url": "example-Data:ChildNode07" },
+        { "name": "ChildNode08", "url": "example-Data:ChildNode08" },
+        { "name": "ChildNode09", "url": "example-Data:ChildNode09" },
+        { "name": "ChildNode10", "url": "example-Data:ChildNode10" },
+        { "name": "ChildNode11", "url": "example-Data:ChildNode11" },
+        { "name": "ChildNode12", "url": "example-Data:ChildNode12" },
+        { "name": "ChildNode13", "url": "example-Data:ChildNode13" },
+        { "name": "ChildNode14", "url": "example-Data:ChildNode14" },
+        { "name": "ChildNode15", "url": "example-Data:ChildNode15" },
+        { "name": "ChildNode16", "url": "example-Data:ChildNode16" },
+        { "name": "ChildNode17", "url": "example-Data:ChildNode17" },
+        { "name": "ChildNode18", "url": "example-Data:ChildNode18" },
+        { "name": "ChildNode19", "url": "example-Data:ChildNode19" },
+        { "name": "ChildNode20", "url": "example-Data:ChildNode20" }
+      ]
+    },
+    {
+      "id": "ChildNode01",
+      "name": "Child Node 01",
+      "position": { "x": 10, "y": 0, "z": 0 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode02",
+      "name": "Child Node 02",
+      "position": { "x": -10, "y": 0, "z": 0 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode03",
+      "name": "Child Node 03",
+      "position": { "x": 0, "y": 10, "z": 0 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode04",
+      "name": "Child Node 04",
+      "position": { "x": 0, "y": -10, "z": 0 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode05",
+      "name": "Child Node 05",
+      "position": { "x": 0, "y": 0, "z": 10 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode06",
+      "name": "Child Node 06",
+      "position": { "x": 0, "y": 0, "z": -10 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode07",
+      "name": "Child Node 07",
+      "position": { "x": 7, "y": 7, "z": 7 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode08",
+      "name": "Child Node 08",
+      "position": { "x": -7, "y": -7, "z": 7 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode09",
+      "name": "Child Node 09",
+      "position": { "x": 7, "y": -7, "z": -7 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode10",
+      "name": "Child Node 10",
+      "position": { "x": -7, "y": 7, "z": -7 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode11",
+      "name": "Child Node 11",
+      "position": { "x": 5, "y": 5, "z": 10 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode12",
+      "name": "Child Node 12",
+      "position": { "x": -5, "y": -5, "z": 10 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode13",
+      "name": "Child Node 13",
+      "position": { "x": 5, "y": 5, "z": -10 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode14",
+      "name": "Child Node 14",
+      "position": { "x": -5, "y": -5, "z": -10 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode15",
+      "name": "Child Node 15",
+      "position": { "x": 10, "y": 5, "z": 5 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode16",
+      "name": "Child Node 16",
+      "position": { "x": -10, "y": -5, "z": 5 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode17",
+      "name": "Child Node 17",
+      "position": { "x": 5, "y": 10, "z": -5 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode18",
+      "name": "Child Node 18",
+      "position": { "x": -5, "y": -10, "z": -5 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode19",
+      "name": "Child Node 19",
+      "position": { "x": 7, "y": 7, "z": -7 },
+      "shape": "cube",
+      "parent": "MainNode"
+    },
+    {
+      "id": "ChildNode20",
+      "name": "Child Node 20",
+      "position": { "x": -7, "y": -7, "z": 7 },
+      "shape": "cube",
+      "parent": "MainNode"
+    }
+  ],
+  "edges": [
+    { "source": "MainNode", "target": "ChildNode01" },
+    { "source": "MainNode", "target": "ChildNode02" },
+    { "source": "MainNode", "target": "ChildNode03" },
+    { "source": "MainNode", "target": "ChildNode04" },
+    { "source": "MainNode", "target": "ChildNode05" },
+    { "source": "MainNode", "target": "ChildNode06" },
+    { "source": "MainNode", "target": "ChildNode07" },
+    { "source": "MainNode", "target": "ChildNode08" },
+    { "source": "MainNode", "target": "ChildNode09" },
+    { "source": "MainNode", "target": "ChildNode10" },
+    { "source": "MainNode", "target": "ChildNode11" },
+    { "source": "MainNode", "target": "ChildNode12" },
+    { "source": "MainNode", "target": "ChildNode13" },
+    { "source": "MainNode", "target": "ChildNode14" },
+    { "source": "MainNode", "target": "ChildNode15" },
+    { "source": "MainNode", "target": "ChildNode16" },
+    { "source": "MainNode", "target": "ChildNode17" },
+    { "source": "MainNode", "target": "ChildNode18" },
+    { "source": "MainNode", "target": "ChildNode19" },
+    { "source": "MainNode", "target": "ChildNode20" }
+  ]
+}

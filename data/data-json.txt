@@ -3,7 +3,7 @@
     {
       "id": "Bioreactor_a3f2550d83f6",
       "name": "Bioreactor",
-      "position": { "x": 0, "y": 0, "z": 0 },
+      "position": { "x": 10, "y": 10, "z": 0 },
       "shape": "cube",
       "source": [
         { "name": "oxygenDeliveryControl01", "url": "burkert-Data:oxygenDeliveryControl01" },
@@ -22,100 +22,99 @@
     {
       "id": "Client01",
       "name": "Client",
-      "position": { "x": 5, "y": 0, "z": 3 },
+      "position": { "x": 0, "y": 0, "z": 0 },
       "shape": "cube",
       "parent": "Bioreactor_a3f2550d83f6"
     },
     {
       "id": "oxygenDeliveryControl01",
       "name": "Oxygen Delivery Control",
-      "position": { "x": 4, "y": 2.5, "z": 3 },
+      "position": { "x": 10, "y": 5, "z": 0 },
       "shape": "cube",
       "parent": "Bioreactor_a3f2550d83f6"
     },
     {
       "id": "PHcontrol01",
       "name": "PH Control",
-      "position": { "x": 2.5, "y": 4, "z": 3 },
+      "position": { "x": 10, "y": 0, "z": 0 },
       "shape": "cube",
       "parent": "Bioreactor_a3f2550d83f6"
     },
     {
       "id": "HeadSpaceFlushing01",
       "name": "Head Space Flushing",
-      "position": { "x": 0, "y": 5, "z": 3 },
+      "position": { "x": 5, "y": 0, "z": 0 },
       "shape": "sphere",
       "parent": "Bioreactor_a3f2550d83f6"
     },
     {
       "id": "Heating01",
       "name": "Heating",
-      "position": { "x": -2.5, "y": 4, "z": 3 },
+      "position": { "x": 10, "y": 10, "z": 5 },
       "shape": "cube",
       "parent": "Bioreactor_a3f2550d83f6"
     },
     {
       "id": "Cooling01",
       "name": "Cooling",
-      "position": { "x": -4, "y": 2.5, "z": 3 },
+      "position": { "x": 15, "y": 10, "z": 0 },
       "shape": "cube",
       "parent": "Bioreactor_a3f2550d83f6"
     },
     {
       "id": "FoamingControl01",
       "name": "Foaming Control",
-      "position": { "x": -5, "y": 0, "z": 3 },
+      "position": { "x": 20, "y": 10, "z": 0 },
       "shape": "cube",
       "parent": "Bioreactor_a3f2550d83f6"
     },
     {
       "id": "Bufferfeeding01",
       "name": "Buffer Feeding",
-      "position": { "x": -4, "y": -2.5, "z": 3 },
+      "position": { "x": 5, "y": 5, "z": 0 },
       "shape": "cube",
       "parent": "Bioreactor_a3f2550d83f6"
     },
     {
       "id": "CellCultureMediaFeeding01",
       "name": "Cell Culture Media Feeding",
-      "position": { "x": -2.5, "y": -4, "z": 3 },
+      "position": { "x": 0, "y": 5, "z": 0 },
       "shape": "cube",
       "parent": "Bioreactor_a3f2550d83f6"
     },
     {
       "id": "CellGrowthControl01",
       "name": "Cell Growth Control",
-      "position": { "x": 0, "y": -5, "z": 3 },
+      "position": { "x": 15, "y": 5, "z": 0 },
       "shape": "cube",
       "parent": "Bioreactor_a3f2550d83f6"
     },
     {
       "id": "FermentationProcessMonitoring01",
       "name": "Fermentation Process Monitoring",
-      "position": { "x": 2.5, "y": -4, "z": 3 },
+      "position": { "x": 10, "y": 15, "z": 0 },
       "shape": "cube",
       "parent": "Bioreactor_a3f2550d83f6"
     },
     {
       "id": "TemperatureControl01",
       "name": "Temperature Control",
-      "position": { "x": 4, "y": -2.5, "z": 3 },
+      "position": { "x": 20, "y": 0, "z": 0 },
       "shape": "cube",
       "parent": "Bioreactor_a3f2550d83f6"
     },
     {
       "id": "SalesCase01",
       "name": "Sales Case",
-      "position": { "x": 5, "y": 5, "z": 6 },
+      "position": { "x": 15, "y": 15, "z": 0 },
       "shape": "sphere",
       "parent": "Bioreactor_a3f2550d83f6"
     },
     {
       "id": "NewParent_b4c3661e94a7",
-      "name": "STTTT",
-      "position": { "x": 10, "y": 10, "z": 6 },
+      "name": "New Parent",
+      "position": { "x": 30, "y": 30, "z": 0 },
       "shape": "cube",
-      "parent": "Bioreactor_a3f2550d83f6",
       "source": [
         { "name": "NewChild01", "url": "example-Data:NewChild01" },
         { "name": "NewChild02", "url": "example-Data:NewChild02" }
@@ -124,23 +123,22 @@
     {
       "id": "NewChild01",
       "name": "New Child 01",
-      "position": { "x": 12, "y": 12, "z": 6 },
+      "position": { "x": 35, "y": 35, "z": 0 },
       "shape": "cube",
-      "parent": "Bioreactor_a3f2550d83f6"
+      "parent": "NewParent_b4c3661e94a7"
     },
     {
       "id": "NewChild02",
       "name": "New Child 02",
-      "position": { "x": 14, "y": 14, "z": 6 },
+      "position": { "x": 40, "y": 40, "z": 0 },
       "shape": "sphere",
-      "parent": "Bioreactor_a3f2550d83f6"
+      "parent": "NewParent_b4c3661e94a7"
     },
     {
       "id": "FiltrationUnit_c7f4661e94a7",
       "name": "Filtration Unit",
-      "position": { "x": 8, "y": 8, "z": 6 },
+      "position": { "x": 25, "y": 25, "z": 0 },
       "shape": "cube",
-      "parent": "Bioreactor_a3f2550d83f6",
       "source": [
         { "name": "FiltrationProcess01", "url": "example-Data:FiltrationProcess01" },
         { "name": "FiltrationProcess02", "url": "example-Data:FiltrationProcess02" }
@@ -149,23 +147,22 @@
     {
       "id": "FiltrationProcess01",
       "name": "Filtration Process 01",
-      "position": { "x": 9, "y": 8, "z": 6 },
+      "position": { "x": 30, "y": 25, "z": 0 },
       "shape": "cube",
-      "parent": "Bioreactor_a3f2550d83f6"
+      "parent": "FiltrationUnit_c7f4661e94a7"
     },
     {
       "id": "FiltrationProcess02",
       "name": "Filtration Process 02",
-      "position": { "x": 10, "y": 8, "z": 6 },
+      "position": { "x": 35, "y": 25, "z": 0 },
       "shape": "sphere",
-      "parent": "Bioreactor_a3f2550d83f6"
+      "parent": "FiltrationUnit_c7f4661e94a7"
     },
     {
       "id": "SterilizationUnit_d8g5772f95b8",
       "name": "Sterilization Unit",
-      "position": { "x": 14, "y": 14, "z": 6 },
+      "position": { "x": 50, "y": 50, "z": 0 },
       "shape": "cube",
-      "parent": "Bioreactor_a3f2550d83f6",
       "source": [
         { "name": "SterilizationProcess01", "url": "example-Data:SterilizationProcess01" },
         { "name": "SterilizationProcess02", "url": "example-Data:SterilizationProcess02" }
@@ -174,16 +171,40 @@
     {
       "id": "SterilizationProcess01",
       "name": "Sterilization Process 01",
-      "position": { "x": 14, "y": 14, "z": 26 },
+      "position": { "x": 55, "y": 55, "z": 0 },
       "shape": "cube",
-      "parent": "Bioreactor_a3f2550d83f6"
+      "parent": "SterilizationUnit_d8g5772f95b8"
     },
     {
       "id": "SterilizationProcess02",
       "name": "Sterilization Process 02",
-      "position": { "x": 14, "y": 14, "z": 16 },
+      "position": { "x": 60, "y": 60, "z": 0 },
       "shape": "sphere",
-      "parent": "Bioreactor_a3f2550d83f6"
+      "parent": "SterilizationUnit_d8g5772f95b8"
+    },
+    {
+      "id": "WasteManagementUnit_e9h6883g16c9",
+      "name": "Waste Management Unit",
+      "position": { "x": 70, "y": 70, "z": 0 },
+      "shape": "cube",
+      "source": [
+        { "name": "WasteTreatment01", "url": "example-Data:WasteTreatment01" },
+        { "name": "WasteTreatment02", "url": "example-Data:WasteTreatment02" }
+      ]
+    },
+    {
+      "id": "WasteTreatment01",
+      "name": "Waste Treatment 01",
+      "position": { "x": 75, "y": 75, "z": 0 },
+      "shape": "cube",
+      "parent": "WasteManagementUnit_e9h6883g16c9"
+    },
+    {
+      "id": "WasteTreatment02",
+      "name": "Waste Treatment 02",
+      "position": { "x": 80, "y": 80, "z": 0 },
+      "shape": "sphere",
+      "parent": "WasteManagementUnit_e9h6883g16c9"
     }
   ],
   "edges": [
@@ -200,17 +221,13 @@
     { "source": "Bioreactor_a3f2550d83f6", "target": "FermentationProcessMonitoring01" },
     { "source": "Bioreactor_a3f2550d83f6", "target": "TemperatureControl01" },
     { "source": "Bioreactor_a3f2550d83f6", "target": "Client01" },
-    { "source": "Bioreactor_a3f2550d83f6", "target": "NewChild01" },
-    { "source": "Bioreactor_a3f2550d83f6", "target": "NewChild02" },
-    { "source": "Bioreactor_a3f2550d83f6", "target": "FiltrationProcess01" },
-    { "source": "Bioreactor_a3f2550d83f6", "target": "FiltrationProcess02" },
-    { "source": "Bioreactor_a3f2550d83f6", "target": "SterilizationProcess01" },
-    { "source": "Bioreactor_a3f2550d83f6", "target": "SterilizationProcess02" },
-    { "source": "Bioreactor_a3f2550d83f6", "target": "WasteTreatment01" },
-    { "source": "Bioreactor_a3f2550d83f6", "target": "WasteTreatment02" },
-    { "source": "Bioreactor_a3f2550d83f6", "target": "FiltrationUnit_c7f4661e94a7" },
-    { "source": "Bioreactor_a3f2550d83f6", "target": "NewParent_b4c3661e94a7" },
-    { "source": "Bioreactor_a3f2550d83f6", "target": "WasteManagementUnit_e9h6883g16c9" },
-    { "source": "Bioreactor_a3f2550d83f6", "target": "SterilizationUnit_d8g5772f95b8" }
+    { "source": "NewParent_b4c3661e94a7", "target": "NewChild01" },
+    { "source": "NewParent_b4c3661e94a7", "target": "NewChild02" },
+    { "source": "FiltrationUnit_c7f4661e94a7", "target": "FiltrationProcess01" },
+    { "source": "FiltrationUnit_c7f4661e94a7", "target": "FiltrationProcess02" },
+    { "source": "SterilizationUnit_d8g5772f95b8", "target": "SterilizationProcess01" },
+    { "source": "SterilizationUnit_d8g5772f95b8", "target": "SterilizationProcess02" },
+    { "source": "WasteManagementUnit_e9h6883g16c9", "target": "WasteTreatment01" },
+    { "source": "WasteManagementUnit_e9h6883g16c9", "target": "WasteTreatment02" }
   ]
 }

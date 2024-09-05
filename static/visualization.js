@@ -1,5 +1,3 @@
-// visualization.js
-
 function init(data) {
     // Set up the scene, camera, and renderer
     const scene = new THREE.Scene();
@@ -11,11 +9,11 @@ function init(data) {
     // Add orbit controls
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-    // Create a map to store the nodes by their IDs
+    // Create a map to store the nodes by their IDs for easy access
     const nodes = new Map();
     const draggableObjects = [];
-    const edges = new Map(); // Store edges in a map for easy access
-    const labels = new Map(); // Store node labels
+    const edges = new Map(); 
+    const labels = new Map();
 
     // Function to generate random position around a parent node
     function getRandomPositionAroundParent(parentPosition, radius) {
